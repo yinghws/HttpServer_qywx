@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29924.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer_qywx", "HttpServer_qywx\HttpServer_qywx.csproj", "{B31C8ED8-628A-4245-8F67-EDEF62C11AB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B31C8ED8-628A-4245-8F67-EDEF62C11AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31C8ED8-628A-4245-8F67-EDEF62C11AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31C8ED8-628A-4245-8F67-EDEF62C11AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31C8ED8-628A-4245-8F67-EDEF62C11AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7EF9A24C-630B-43A5-AE2E-8716C1E42F8C}
+	EndGlobalSection
+EndGlobal
