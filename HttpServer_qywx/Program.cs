@@ -398,7 +398,7 @@ namespace HttpServer_qywx
                         if (DateTime.Now.Subtract(qt[i].lasttime).TotalSeconds > 180)
                         {
                             //qt.Remove(qt[i]);   //直接删除可能会影响循环，但需另定期清理过期元素。代码尚未添加 
-
+                            //list批量删除元素
                         }
                         else
                         {
