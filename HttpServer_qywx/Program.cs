@@ -503,7 +503,7 @@ namespace HttpServer_qywx
                                         string jg = "";
                                         while (rder.Read())
                                         {
-                                            jg = jg + string.Format("姓名：{0}; 单位：{1}; 电话：{2} \n", rder["name"].ToString(), rder["unit"].ToString(), rder["phone"].ToString());
+                                            jg = jg + string.Format("姓名：{0}; 单位：{1}; 电话：{2}（{3}） \n", rder["name"].ToString(), rder["unit"].ToString(), rder["phone"].ToString(), rder["label"].ToString());
                                         }
                                         h1.App_send(content_from, "", "", jg, "0");
 
