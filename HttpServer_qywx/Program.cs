@@ -393,127 +393,133 @@ namespace HttpServer_qywx
                 if (qt.Count > 0 && !message_stat)
                 {
                     //foreach (var i in qt)
-                    for (int i = 0; i < qt.Count; i++)
+                    qt.RemoveAll(x =>
                     {
-                        if (DateTime.Now.Subtract(qt[i].lasttime).TotalSeconds > 180)
+                        if (DateTime.Now.Subtract(x.lasttime).TotalSeconds > 180)
                         {
-                            //qt.Remove(qt[i]);   //直接删除可能会影响循环，但需另定期清理过期元素。代码尚未添加 
-                            //list批量删除元素
+                            return true;
                         }
                         else
                         {
-                            if (content_from == qt[i].user_id)
+                            return false;
+                        }
+                    });
+                    for (int i = 0; i < qt.Count; i++)
+                    {
+                        if (content_from == qt[i].user_id)
+                        {
+                            if (qt[i].title == "yingbanstat1")
                             {
-                                if (qt[i].title == "yingbanstat1")
+                                if ((content.Trim().Length == 10) || (content.Trim() == "今天") || (content.Trim() == "明天") || (content.Trim() == "后天") || (content.Trim() == "昨天"))
                                 {
-                                    if ((content.Trim().Length == 10) || (content.Trim() == "今天") || (content.Trim() == "明天") || (content.Trim() == "后天") || (content.Trim() == "昨天"))
+                                    if (content.Trim() == "今天")
                                     {
-                                        if (content.Trim() == "今天")
-                                        {
-                                            content = DateTime.Now.ToString("yyyy-MM-dd");
-                                        }
-                                        if (content.Trim() == "明天")
-                                        {
-                                            content = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
-                                        }
-                                        if (content.Trim() == "后天")
-                                        {
-                                            content = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
-                                        }
-                                        if (content.Trim() == "昨天")
-                                        {
-                                            content = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-                                        }
-                                        SqlConnection conn = new SqlConnection();
-                                        conn.ConnectionString = "server=192.168.8.18;database=my_data;user=sa;pwd=VA4X1abfy76pY";
-                                        conn.Open();
-                                        SqlCommand cmd = new SqlCommand();
-                                        cmd.Connection = conn;
-                                        cmd.CommandText = string.Format("select * from qywx_xxkpb where (pb=DATEDIFF(day,'2020-03-26','{0}')%6+1 )", content);
-                                        try
-                                        {
-                                            SqlDataReader read1 = cmd.ExecuteReader();
-                                            read1.Read();
-                                            string huifu = "";
-                                            if (read1["userid"].ToString() == content_from)
-                                            {
-                                                huifu = "问啥问？就是你!";
-                                            }
-                                            else
-                                            {
-                                                huifu = content + "是" + read1["name"].ToString() + "应班";
-                                            }
-                                            ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
-                                            h1.App_send(content_from, "", "", huifu, "0");
-                                            message_stat = true;
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                            return;
-                                        }
-                                        finally
-                                        {
-                                            conn.Close();
-                                        }
-                                        qt.Remove(qt[i]);
+                                        content = DateTime.Now.ToString("yyyy-MM-dd");
                                     }
-                                    else
+                                    if (content.Trim() == "明天")
                                     {
-                                        ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
-                                        h1.App_send(content_from, "", "", "请注意输入日期格式例如：（2020-01-01）", "0");
+                                        content = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
                                     }
-                                }
-                                if (qt[i].title == "txl_qry")
-                                {
+                                    if (content.Trim() == "后天")
+                                    {
+                                        content = DateTime.Now.AddDays(2).ToString("yyyy-MM-dd");
+                                    }
+                                    if (content.Trim() == "昨天")
+                                    {
+                                        content = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+                                    }
                                     SqlConnection conn = new SqlConnection();
                                     conn.ConnectionString = "server=192.168.8.18;database=my_data;user=sa;pwd=VA4X1abfy76pY";
                                     conn.Open();
                                     SqlCommand cmd = new SqlCommand();
                                     cmd.Connection = conn;
-                                    string sqltext = "";
-                                    if (content.IndexOf("姓名") == 0 || content.IndexOf("单位") == 0 || content.IndexOf("标签") == 0)
+                                    cmd.CommandText = string.Format("select * from qywx_xxkpb where (pb=DATEDIFF(day,'2020-03-26','{0}')%6+1 )", content);
+                                    try
                                     {
-                                        if (content.IndexOf("姓名") == 0)
+                                        SqlDataReader read1 = cmd.ExecuteReader();
+                                        read1.Read();
+                                        string huifu = "";
+                                        if (read1["userid"].ToString() == content_from)
                                         {
-                                            sqltext = string.Format(" name like '%{0}%' ", content.Substring(3));
-                                        }
-                                        if (content.IndexOf("单位") == 0)
-                                        {
-                                            sqltext = string.Format(" unit like '%{0}%' ", content.Substring(3));
-                                        }
-                                        if (content.IndexOf("标签") == 0)
-                                        {
-                                            sqltext = string.Format(" label like '%{0}%' ", content.Substring(3));
-                                        }
-                                        cmd.CommandText = string.Format("select * from qywx_phone where {0}", sqltext);
-                                        SqlDataReader rder = cmd.ExecuteReader();
-                                        ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
-                                        if (!rder.HasRows)
-                                        {
-                                            h1.App_send(content_from, "", "", "未查询相关通讯录！", "0");
+                                            huifu = "问啥问？就是你!";
                                         }
                                         else
                                         {
-                                            string jg = "";
-                                            while (rder.Read())
-                                            {
-                                                jg = jg + string.Format("姓名：{0}; 单位：{1}; 电话：{2} \n", rder["name"].ToString(), rder["unit"].ToString(), rder["phone"].ToString());
-                                            }
-                                            h1.App_send(content_from, "", "", jg, "0");
-
+                                            huifu = content + "是" + read1["name"].ToString() + "应班";
                                         }
-                                        qt.Remove(qt[i]);
+                                        ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
+                                        h1.App_send(content_from, "", "", huifu, "0");
+                                        message_stat = true;
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                        return;
+                                    }
+                                    finally
+                                    {
+                                        conn.Close();
+                                    }
+                                    qt.Remove(qt[i]);
+                                    break;
+                                }
+                                else
+                                {
+                                    ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
+                                    h1.App_send(content_from, "", "", "请注意输入日期格式例如：（2020-01-01）", "0");
+                                }
+                            }
+                            if (qt[i].title == "txl_qry")
+                            {
+                                SqlConnection conn = new SqlConnection();
+                                conn.ConnectionString = "server=192.168.8.18;database=my_data;user=sa;pwd=VA4X1abfy76pY";
+                                conn.Open();
+                                SqlCommand cmd = new SqlCommand();
+                                cmd.Connection = conn;
+                                string sqltext = "";
+                                if (content.IndexOf("姓名") == 0 || content.IndexOf("单位") == 0 || content.IndexOf("标签") == 0)
+                                {
+                                    if (content.IndexOf("姓名") == 0)
+                                    {
+                                        sqltext = string.Format(" name like '%{0}%' ", content.Substring(3));
+                                    }
+                                    if (content.IndexOf("单位") == 0)
+                                    {
+                                        sqltext = string.Format(" unit like '%{0}%' ", content.Substring(3));
+                                    }
+                                    if (content.IndexOf("标签") == 0)
+                                    {
+                                        sqltext = string.Format(" label like '%{0}%' ", content.Substring(3));
+                                    }
+                                    cmd.CommandText = string.Format("select * from qywx_phone where {0}", sqltext);
+                                    SqlDataReader rder = cmd.ExecuteReader();
+                                    ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
+                                    if (!rder.HasRows)
+                                    {
+                                        h1.App_send(content_from, "", "", "未查询相关通讯录！", "0");
                                     }
                                     else
                                     {
-                                        ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
-                                        h1.App_send(content_from, "", "", "请注意输入查询格式如：（姓名@小明）", "0");
-                                    }
+                                        string jg = "";
+                                        while (rder.Read())
+                                        {
+                                            jg = jg + string.Format("姓名：{0}; 单位：{1}; 电话：{2} \n", rder["name"].ToString(), rder["unit"].ToString(), rder["phone"].ToString());
+                                        }
+                                        h1.App_send(content_from, "", "", jg, "0");
 
+                                    }
+                                    qt.Remove(qt[i]);
+                                    break;
                                 }
+                                else
+                                {
+                                    ConsoleApplication1.Http_send h1 = new ConsoleApplication1.Http_send();
+                                    h1.App_send(content_from, "", "", "请注意输入查询格式如：（姓名@小明）", "0");
+                                }
+
                             }
                         }
+
 
 
                     }
