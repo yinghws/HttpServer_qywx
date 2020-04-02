@@ -69,20 +69,39 @@ namespace ConsoleApplication1
         }
 
 
-        public bool Is_holiday(string date1)
+        public string IsHolidayByDate(string date)
         {
-            string url = string.Format("http://www.easybots.cn/api/holiday.php?d={0}",date1);
-            var responseString = http.GetStringAsync(url);
-            JObject jztxx = JObject.Parse(responseString.Result);
-            string result = jztxx[date1].ToString();
-            if (result == "0")
+            string isHoliday = "";
+            System.Net.WebClient WebClientObj = new System.Net.WebClient();
+            System.Collections.Specialized.NameValueCollection PostVars = new System.Collections.Specialized.NameValueCollection();
+            PostVars.Add("d", date);//参数
+            try
             {
-                return false;
+
+                //  用法举例<br>                 //  检查具体日期是否为节假日，工作日对应结果为 0, 休息日对应结果为 1, 节假日对应的结果为 2；
+                //   检查一个日期是否为节假日 http://www.easybots.cn/api/holiday.php?d=20130101
+                //  检查多个日期是否为节假日 http://www.easybots.cn/api/holiday.php?d=20130101,20130103,20130105,20130201
+                //获取2012年1月份节假日 http://www.easybots.cn/api/holiday.php?m=201201
+                //获取2013年1 / 2月份节假日 http://www.easybots.cn/api/holiday.php?m=201301,201302
+
+                byte[] byRemoteInfo = WebClientObj.UploadValues(@"http://www.easybots.cn/api/holiday.php", "POST", PostVars);//请求地址,传参方式,参数集合
+                string sRemoteInfo = System.Text.Encoding.UTF8.GetString(byRemoteInfo);//获取返回值
+
+                string result = JObject.Parse(sRemoteInfo)[date].ToString();
+                if (result == "0")
+                {
+                    isHoliday = "0";
+                }
+                else if (result == "1" || result == "2")
+                {
+                    isHoliday = "1";
+                }
             }
-            else
+            catch
             {
-                return true;
+                isHoliday = "2";
             }
+            return isHoliday;
         }
         public string Get_token()
         {
