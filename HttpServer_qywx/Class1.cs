@@ -67,6 +67,23 @@ namespace ConsoleApplication1
         {
             http = new HttpClient();
         }
+
+
+        public bool Is_holiday(string date1)
+        {
+            string url = string.Format("http://www.easybots.cn/api/holiday.php?d={0}",date1);
+            var responseString = http.GetStringAsync(url);
+            JObject jztxx = JObject.Parse(responseString.Result);
+            string result = jztxx[date1].ToString();
+            if (result == "0")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         public string Get_token()
         {
             if ((firstget) || (gettime.Subtract(DateTime.Now).TotalSeconds < -7200))
